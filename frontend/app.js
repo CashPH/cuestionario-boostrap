@@ -13,22 +13,27 @@ let respuestasUsuario = {};
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // 1. Obtener las preguntas del Backend
-        // Nota: Asegúrate de reemplazar la URL de arriba con la real de Render
         const response = await fetch(`${API_URL}/preguntas`);
+        // ⚠️ CLAVE: Verifica si la respuesta es OK antes de leer el JSON
         if (!response.ok) {
-            throw new Error('No se pudo conectar al servidor API.');
+             // Si la respuesta no es 200 (OK), lanzamos un error que se captura abajo
+             const errorData = await response.json(); // Intenta leer el JSON de error
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
         }
-        preguntas = await response.json();
+        
+        preguntas = await response.json(); 
 
-        if (preguntas.length > 0) {
+        // ⚠️ CLAVE: Verifica que el JSON sea un array de preguntas (es la fuente del error 'forEach')
+        if (Array.isArray(preguntas) && preguntas.length > 0) {
             mostrarPregunta(indiceActual);
         } else {
-            cuestionarioContainer.innerHTML = '<p class="text-danger text-center">Error: No se pudieron cargar las preguntas o la DB está vacía.</p>';
+            // Esto manejaría el caso donde la DB esté vacía
+            cuestionarioContainer.innerHTML = '<p class="text-danger text-center">Error: La base de datos no devolvió preguntas (¡puede estar vacía!).</p>';
         }
     } catch (error) {
         console.error('Error al cargar las preguntas:', error);
-        cuestionarioContainer.innerHTML = `<p class="alert alert-danger text-center">Error de conexión: ${error.message}. Verifica si la API está desplegada.</p>`;
+        // Mostrar el mensaje de error capturado
+        cuestionarioContainer.innerHTML = `<p class="alert alert-danger text-center">Error de conexión: ${error.message}. Verifica los logs del servidor.</p>`;
     }
 });
 
