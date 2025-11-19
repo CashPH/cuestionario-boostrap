@@ -8,11 +8,16 @@ const port = process.env.PORT || 3000;
 
 // --- CONFIGURACIÓN DE LA BASE DE DATOS ---
 const dbConfig = {
-    // Si la variable de entorno de Render NO incluye sslmode=require, 
-    // usa esta URL local, pero asegúrate de que TENGA el parámetro SSL.
-    connectionString: process.env.DATABASE_URL || 'postgresql://cuestionario_db_goho_user:JK2Qqt592xLOPJvfd4tCaDyoerePSQ0l@dpg-d4eh34er433s738n8u8g-a.oregon-postgres.render.com/cuestionario_db_goho?sslmode=require'
-
+    // Si estamos en Render, usa la variable de entorno, si no, usa la URL local
+    connectionString: process.env.DATABASE_URL || 'postgresql://cuestionario_db_goho_user:JK2Qqt592xLOPJvfd4tCaDyoerePSQ0l@dpg-d4eh34er433s738n8u8g-a.oregon-postgres.render.com/cuestionario_db_goho'
 };
+
+// ** LA SOLUCIÓN ROBUSTA: Aplicar SSL solo en el entorno de producción (Render) **
+if (process.env.DATABASE_URL) {
+    dbConfig.ssl = {
+        rejectUnauthorized: false
+    };
+}
 
 const pool = new Pool(dbConfig);
 
