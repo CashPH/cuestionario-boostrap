@@ -5,7 +5,7 @@ const btnFinalizar = document.getElementById('btn-finalizar');
 
 // ¡IMPORTANTE! Reemplaza esto con la URL que te dé Render para tu Web Service
 // NO es la URL de la base de datos, sino la URL pública de tu API.
-const API_URL = 'https://TU-URL-WEB-SERVICE.onrender.com/api'; 
+const API_URL = 'https://cuestionario-api.onrender.com/api'; 
 
 let preguntas = [];
 let indiceActual = 0;
