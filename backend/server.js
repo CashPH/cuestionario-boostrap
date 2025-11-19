@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 
 // --- CONFIGURACIÓN DE LA BASE DE DATOS ---
 const dbConfig = {
-    // Si estamos en Render, usa la variable de entorno, si no, usa la URL local
+    // La variable PGSSLMODE se encargará de esto cuando esté en Render.
     connectionString: process.env.DATABASE_URL || 'postgresql://cuestionario_db_goho_user:JK2Qqt592xLOPJvfd4tCaDyoerePSQ0l@dpg-d4eh34er433s738n8u8g-a.oregon-postgres.render.com/cuestionario_db_goho'
 };
 
