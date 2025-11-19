@@ -14,22 +14,34 @@ let respuestasUsuario = {};
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch(`${API_URL}/preguntas`);
-        // ... (código de manejo de errores si response.ok no es true)
-
-        preguntas = await response.json(); 
         
-        // ⚠️ Asegúrate de que 'preguntas' sea un Array antes de intentar usarlo
-        if (Array.isArray(preguntas) && preguntas.length > 0) {
-            // El array fue cargado exitosamente
+        // 1. Verificar el estado HTTP
+        if (!response.ok) {
+            const errorData = await response.json(); 
+            throw new Error(errorData.error || `Error HTTP! Status: ${response.status}`);
+        }
+        
+        // 2. Intentar leer el JSON
+        const data = await response.json(); 
+        
+        // 3. ¡LA CORRECCIÓN CLAVE! Validar que es un array
+        if (Array.isArray(data)) {
+            preguntas = data;
+        } else {
+            // Si no es array (es undefined, null, o un objeto {}), lo tratamos como error
+            throw new Error("El servidor devolvió un formato incorrecto (no es un array).");
+        }
+
+
+        if (preguntas.length > 0) {
             mostrarPregunta(indiceActual);
         } else {
-            // Si no es array o está vacío, muestra un mensaje útil
-            cuestionarioContainer.innerHTML = '<p class="alert alert-warning text-center">La base de datos se conectó, pero no devolvió ninguna pregunta. Revise si la tabla "preguntas" está vacía.</p>';
+            cuestionarioContainer.innerHTML = '<p class="alert alert-warning text-center">Base de datos vacía o datos no cargados. Revise la tabla SQL.</p>';
         }
     } catch (error) {
         console.error('Error al cargar las preguntas:', error);
         // Mostrar el mensaje de error capturado
-        cuestionarioContainer.innerHTML = `<p class="alert alert-danger text-center">Error de conexión: ${error.message}. Verifica los logs del servidor.</p>`;
+        cuestionarioContainer.innerHTML = `<p class="alert alert-danger text-center">Error de conexión: ${error.message}. Verifique los logs del servidor.</p>`;
     }
 });
 
