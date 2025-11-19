@@ -14,21 +14,17 @@ let respuestasUsuario = {};
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch(`${API_URL}/preguntas`);
-        // ⚠️ CLAVE: Verifica si la respuesta es OK antes de leer el JSON
-        if (!response.ok) {
-             // Si la respuesta no es 200 (OK), lanzamos un error que se captura abajo
-             const errorData = await response.json(); // Intenta leer el JSON de error
-            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
-        }
-        
-        preguntas = await response.json(); 
+        // ... (código de manejo de errores si response.ok no es true)
 
-        // ⚠️ CLAVE: Verifica que el JSON sea un array de preguntas (es la fuente del error 'forEach')
+        preguntas = await response.json(); 
+        
+        // ⚠️ Asegúrate de que 'preguntas' sea un Array antes de intentar usarlo
         if (Array.isArray(preguntas) && preguntas.length > 0) {
+            // El array fue cargado exitosamente
             mostrarPregunta(indiceActual);
         } else {
-            // Esto manejaría el caso donde la DB esté vacía
-            cuestionarioContainer.innerHTML = '<p class="text-danger text-center">Error: La base de datos no devolvió preguntas (¡puede estar vacía!).</p>';
+            // Si no es array o está vacío, muestra un mensaje útil
+            cuestionarioContainer.innerHTML = '<p class="alert alert-warning text-center">La base de datos se conectó, pero no devolvió ninguna pregunta. Revise si la tabla "preguntas" está vacía.</p>';
         }
     } catch (error) {
         console.error('Error al cargar las preguntas:', error);
